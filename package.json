@@ -1,0 +1,23 @@
+{
+  "name": "meetchi-api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "@prisma/client": "^5.3.1",
+    "express": "^4.18.2"
+  },
+  "description": "API for Meetchi",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HeimerichHans/Meetchi_API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HeimerichHans/Meetchi_API/issues"
+  },
+  "homepage": "https://github.com/HeimerichHans/Meetchi_API#readme"
+}

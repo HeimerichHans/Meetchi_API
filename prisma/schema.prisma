@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model cause {
+  id          Int           @id(map: "cause_pk") @default(autoincrement())
+  cause       String        @db.VarChar(64)
+  signalement signalement[]
+}
+
+model contact {
+  id                                              Int         @id(map: "contact_pk") @default(autoincrement())
+  utilisateurida                                  Int
+  utilisateuridb                                  Int
+  estbloquea                                      Boolean     @default(false)
+  estbloqueb                                      Boolean     @default(false)
+  estfinia                                        Boolean     @default(false)
+  estfinib                                        Boolean     @default(false)
+  utilisateur_contact_utilisateuridaToutilisateur utilisateur @relation("contact_utilisateuridaToutilisateur", fields: [utilisateurida], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contact_fk_a")
+  utilisateur_contact_utilisateuridbToutilisateur utilisateur @relation("contact_utilisateuridbToutilisateur", fields: [utilisateuridb], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contact_fk_b")
+  message                                         message[]
+}
+
+model identification {
+  id              Int         @id(map: "identification_pk") @default(autoincrement())
+  utilisateurid   Int
+  email           String      @db.VarChar(100)
+  numerotelephone String      @db.VarChar(13)
+  motdepasse      String      @db.VarChar
+  utilisateur     utilisateur @relation(fields: [utilisateurid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "identification_fk")
+}
+
+model listetag {
+  id                     Int         @id(map: "listetag_pk") @default(autoincrement())
+  utilisateurid          Int
+  tag1                   Int?
+  tag2                   Int?
+  tag3                   Int?
+  tag4                   Int?
+  tag5                   Int?
+  tag6                   Int?
+  utilisateur            utilisateur @relation(fields: [utilisateurid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk")
+  tag_listetag_tag1Totag tag?        @relation("listetag_tag1Totag", fields: [tag1], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_1")
+  tag_listetag_tag2Totag tag?        @relation("listetag_tag2Totag", fields: [tag2], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_2")
+  tag_listetag_tag3Totag tag?        @relation("listetag_tag3Totag", fields: [tag3], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_3")
+  tag_listetag_tag4Totag tag?        @relation("listetag_tag4Totag", fields: [tag4], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_4")
+  tag_listetag_tag5Totag tag?        @relation("listetag_tag5Totag", fields: [tag5], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_5")
+  tag_listetag_tag6Totag tag?        @relation("listetag_tag6Totag", fields: [tag6], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "listetag_fk_6")
+}
+
+model message {
+  id           Int         @id(map: "message_pk") @default(autoincrement())
+  contactid    Int
+  date         DateTime    @db.Date
+  message      String      @db.VarChar(512)
+  auteurid     Int
+  estediter    Boolean     @default(false)
+  estsupprimer Boolean     @default(false)
+  contact      contact     @relation(fields: [contactid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "message_fk_1")
+  utilisateur  utilisateur @relation(fields: [auteurid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "message_fk_2")
+}
+
+model sexe {
+  id          Int           @id(map: "sexe_pk") @default(autoincrement())
+  sexe        String        @db.VarChar(5)
+  utilisateur utilisateur[]
+}
+
+model signalement {
+  id                                                Int         @id(map: "signalement_pk") @default(autoincrement())
+  rapporteurid                                      Int
+  coupableid                                        Int
+  date                                              DateTime    @db.Date
+  causeid                                           Int
+  utilisateur_signalement_rapporteuridToutilisateur utilisateur @relation("signalement_rapporteuridToutilisateur", fields: [rapporteurid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "signalement_fk_1")
+  utilisateur_signalement_coupableidToutilisateur   utilisateur @relation("signalement_coupableidToutilisateur", fields: [coupableid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "signalement_fk_2")
+  cause                                             cause       @relation(fields: [causeid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "signalement_fk_3")
+}
+
+model status {
+  id            Int          @id(map: "status_pk") @default(autoincrement())
+  utilisateurid Int?
+  estvisible    Boolean      @default(true)
+  estactif      Boolean      @default(true)
+  estenligne    Boolean      @default(false)
+  utilisateur   utilisateur? @relation(fields: [utilisateurid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "status_fk")
+}
+
+model tag {
+  id                          Int        @id(map: "tag_pk") @default(autoincrement())
+  tag                         String     @db.VarChar(32)
+  listetag_listetag_tag1Totag listetag[] @relation("listetag_tag1Totag")
+  listetag_listetag_tag2Totag listetag[] @relation("listetag_tag2Totag")
+  listetag_listetag_tag3Totag listetag[] @relation("listetag_tag3Totag")
+  listetag_listetag_tag4Totag listetag[] @relation("listetag_tag4Totag")
+  listetag_listetag_tag5Totag listetag[] @relation("listetag_tag5Totag")
+  listetag_listetag_tag6Totag listetag[] @relation("listetag_tag6Totag")
+}
+
+model utilisateur {
+  id                                                Int              @id(map: "utilisateur_pk") @default(autoincrement())
+  nom                                               String           @db.VarChar(32)
+  prenom                                            String           @db.VarChar(32)
+  pseudonyme                                        String           @db.VarChar(32)
+  description                                       String?          @db.VarChar(250)
+  datecreation                                      DateTime         @db.Date
+  datemiseajour                                     DateTime?        @db.Date
+  sexeid                                            Int
+  contact_contact_utilisateuridaToutilisateur       contact[]        @relation("contact_utilisateuridaToutilisateur")
+  contact_contact_utilisateuridbToutilisateur       contact[]        @relation("contact_utilisateuridbToutilisateur")
+  identification                                    identification[]
+  listetag                                          listetag[]
+  message                                           message[]
+  signalement_signalement_rapporteuridToutilisateur signalement[]    @relation("signalement_rapporteuridToutilisateur")
+  signalement_signalement_coupableidToutilisateur   signalement[]    @relation("signalement_coupableidToutilisateur")
+  status                                            status[]
+  sexe                                              sexe             @relation(fields: [sexeid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "utilisateur_fk")
+}
